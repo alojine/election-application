@@ -7,5 +7,7 @@ import java.util.List;
 
 @Repository
 public interface CandidateRepository {
-    List<Candidate> getAll();
+    List<Candidate> findAll();
+
+    Candidate findByVoteNumber(int votingNumber) throws Exception;
 }

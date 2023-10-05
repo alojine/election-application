@@ -22,6 +22,6 @@ public class CandidateController {
 
     @GetMapping
     public ResponseEntity<List<Candidate>> getAll() {
-        return new ResponseEntity<>(candidateRepository.getAll(), HttpStatus.OK);
+        return new ResponseEntity<>(candidateRepository.findAll(), HttpStatus.OK);
     }
 }

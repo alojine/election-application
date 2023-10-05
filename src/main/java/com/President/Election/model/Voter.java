@@ -1,15 +1,18 @@
 package com.President.Election.model;
 
+import com.President.Election.Enum.Region;
 import lombok.Data;
+
+import java.util.UUID;
 
 @Data
 public class Voter {
 
-    private Long id;
+    private UUID id;
 
     private String name;
 
-    private String region;
+    private Region region;
 
     private Candidate candidate;
 }
