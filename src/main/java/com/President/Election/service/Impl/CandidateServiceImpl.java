@@ -7,6 +7,8 @@ import com.President.Election.service.CandidateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CandidateServiceImpl implements CandidateService {
     private final CandidateRepository candidateRepository;
@@ -14,6 +16,11 @@ public class CandidateServiceImpl implements CandidateService {
     @Autowired
     public CandidateServiceImpl(CandidateRepository candidateRepository) {
         this.candidateRepository = candidateRepository;
+    }
+
+    @Override
+    public List<Candidate> getAll() {
+        return candidateRepository.findAll();
     }
 
     @Override

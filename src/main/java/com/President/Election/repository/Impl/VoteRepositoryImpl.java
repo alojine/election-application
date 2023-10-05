@@ -13,6 +13,11 @@ public class VoteRepositoryImpl implements VoteRepository {
     private final List<Voter> voterList = new ArrayList<>();
 
     @Override
+    public List<Voter> findAll() {
+        return voterList;
+    }
+
+    @Override
     public Voter findByNameAndRegion(String name, Region region){
         for (Voter voter : voterList) {
             if (voter.getName().equals(name) && voter.getRegion().equals(region)) {
