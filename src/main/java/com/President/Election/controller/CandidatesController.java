@@ -12,11 +12,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/candidates")
-public class CandidateController {
+public class CandidatesController {
 
     private final CandidateRepository candidateRepository;
 
-    public CandidateController(CandidateRepository candidateRepository) {
+    public CandidatesController(CandidateRepository candidateRepository) {
         this.candidateRepository = candidateRepository;
     }
 

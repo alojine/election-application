@@ -1,6 +1,6 @@
 package com.President.Election.model;
 
-import com.President.Election.Enum.Region;
+import com.President.Election.enums.Region;
 import lombok.Data;
 
 import java.util.UUID;

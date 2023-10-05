@@ -1,5 +1,6 @@
 package com.President.Election.service.Impl;
 
+import com.President.Election.exception.HasVotedException;
 import com.President.Election.model.Voter;
 import com.President.Election.repository.VoteRepository;
 import com.President.Election.service.VotingService;
@@ -19,22 +20,17 @@ public class VotingServiceImpl implements VotingService {
     }
 
     @Override
-    public Voter registerVote(Voter voter){
-        return voteRepository.save(voter);
-    }
-
-    @Override
-    public boolean validateVoter(Voter voter) throws Exception {
+    public Voter registerVote(Voter voter) throws Exception {
         log.info("Voter validation has started");
         if (voteRepository.findByNameAndRegion(voter.getName(), voter.getRegion()) != null) {
             Voter voterFromDb = voteRepository.findByNameAndRegion(voter.getName(), voter.getRegion());
             if(voterFromDb.getCandidate() == voterFromDb.getCandidate()) {
-                throw new Exception("Voter with id:" + voter.getId() + "has already voted. Voter cannot vote for same candidate twice");
+                throw new HasVotedException("Voter with id:" + voter.getId() + "has already voted. Voter cannot vote for same candidate twice");
             } else if (voterFromDb.getCandidate() != voterFromDb.getCandidate()) {
-                throw new Exception("Voter with id:" + voter.getId() + "has already voted. Voter cannot vote for two different candidates");
+                throw new HasVotedException("Voter with id:" + voter.getId() + "has already voted. Voter cannot vote for two different candidates");
             }
         }
         log.info("Voter validation has finished");
-        return true;
+        return voteRepository.save(voter);
     }
 }

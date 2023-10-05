@@ -16,12 +16,12 @@ public class CandidateRepositoryImpl implements CandidateRepository{
     }
 
     @Override
-    public Candidate findByVoteNumber(int voteNumber) throws Exception {
+    public Optional<Candidate> findByVoteNumber(int voteNumber) {
         for(Candidate candidate : candidates) {
             if (candidate.getVoteNumber() == voteNumber)
-                return candidate;
+                return Optional.of(candidate);
         }
-        throw new Exception("No candidate found. Candidate vote number is invalid.");
+        return Optional.empty();
     }
 
     private List<Candidate> initializeCandidates() {

@@ -1,4 +1,4 @@
-package com.President.Election.Enum;
+package com.President.Election.enums;
 
 public enum Region {
     VILNIUS,

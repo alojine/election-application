@@ -1,6 +1,6 @@
 package com.President.Election.repository.Impl;
 
-import com.President.Election.Enum.Region;
+import com.President.Election.enums.Region;
 import com.President.Election.model.Voter;
 import com.President.Election.repository.VoteRepository;
 import org.springframework.stereotype.Component;
