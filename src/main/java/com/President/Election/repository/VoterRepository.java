@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface VoteRepository {
+public interface VoterRepository {
 
     List<Voter> findAll();
 

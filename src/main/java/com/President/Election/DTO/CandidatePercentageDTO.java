@@ -5,7 +5,9 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public class GeneralDistributionDTO {
+public class CandidatePercentageDTO {
+
     private CandidateDTO candidateDTO;
+
     private BigDecimal percentageOfVotes;
 }

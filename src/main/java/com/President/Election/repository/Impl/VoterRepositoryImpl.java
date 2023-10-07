@@ -2,14 +2,14 @@ package com.President.Election.repository.Impl;
 
 import com.President.Election.enums.Region;
 import com.President.Election.model.Voter;
-import com.President.Election.repository.VoteRepository;
+import com.President.Election.repository.VoterRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class VoteRepositoryImpl implements VoteRepository {
+public class VoterRepositoryImpl implements VoterRepository {
     private final List<Voter> voterList = new ArrayList<>();
 
     @Override

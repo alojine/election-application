@@ -4,7 +4,7 @@ import com.President.Election.DTO.VoteDTO;
 import com.President.Election.enums.Region;
 import com.President.Election.model.Voter;
 import com.President.Election.service.CandidateService;
-import com.President.Election.service.VotingService;
+import com.President.Election.service.VoterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +18,12 @@ import java.util.UUID;
 public class VotesController {
 
     private final CandidateService candidateService;
-    private final VotingService votingService;
+    private final VoterService voterService;
 
     @Autowired
-    public VotesController(CandidateService candidateService, VotingService votingService) {
+    public VotesController(CandidateService candidateService, VoterService voterService) {
         this.candidateService = candidateService;
-        this.votingService = votingService;
+        this.voterService = voterService;
     }
 
     @PostMapping
@@ -35,6 +35,6 @@ public class VotesController {
         voter.setName(voteDto.name());
         voter.setRegion(Region.isValidRegion(voteDto.region()));
         voter.setCandidate(candidateService.getByVoteNumber(voteDto.candidateNumber()));
-        return new ResponseEntity<>(votingService.registerVote(voter), HttpStatus.OK);
+        return new ResponseEntity<>(voterService.registerVote(voter), HttpStatus.OK);
     }
 }

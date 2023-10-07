@@ -1,7 +1,8 @@
 package com.President.Election.controller;
 
 import com.President.Election.DTO.CandidateDTO;
-import com.President.Election.DTO.GeneralDistributionDTO;
+import com.President.Election.DTO.CandidatePercentageDTO;
+import com.President.Election.DTO.RegionDistributionDTO;
 import com.President.Election.service.ResultService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,23 +19,23 @@ public class ResultsController {
 
     private final ResultService resultService;
 
-    @GetMapping
-    public ResponseEntity<List<CandidateDTO>> getWinner() {
-        return new ResponseEntity<>(resultService.getWinner(), HttpStatus.OK);
-    }
-
     @Autowired
     public ResultsController(ResultService resultService) {
         this.resultService = resultService;
     }
 
+    @GetMapping
+    public ResponseEntity<List<CandidateDTO>> getWinner() {
+        return new ResponseEntity<>(resultService.getWinner(), HttpStatus.OK);
+    }
+
     @GetMapping("/general")
-    public ResponseEntity<List<GeneralDistributionDTO>> getGeneralVotingDistribution() {
+    public ResponseEntity<List<CandidatePercentageDTO>> getGeneralVotingDistribution() {
         return new ResponseEntity<>(resultService.calculateGeneralVotingDistribution(), HttpStatus.OK);
     }
 
     @GetMapping("/regions")
-    public ResponseEntity<List<?>> getVotingDistributionByRegions() {
-        return null;
+    public ResponseEntity<List<RegionDistributionDTO>> getVotingDistributionByRegions() {
+        return new ResponseEntity<>(resultService.calculateRegionVotingDistribution(), HttpStatus.OK);
     }
 }

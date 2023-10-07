@@ -1,12 +1,14 @@
 package com.President.Election.service.Impl;
 
 import com.President.Election.DTO.CandidateDTO;
-import com.President.Election.DTO.GeneralDistributionDTO;
+import com.President.Election.DTO.CandidatePercentageDTO;
+import com.President.Election.DTO.RegionDistributionDTO;
+import com.President.Election.enums.Region;
 import com.President.Election.model.Candidate;
 import com.President.Election.model.Voter;
-import com.President.Election.repository.VoteRepository;
 import com.President.Election.service.CandidateService;
 import com.President.Election.service.ResultService;
+import com.President.Election.service.VoterService;
 import com.President.Election.utility.PercentageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,25 +25,76 @@ public class ResultServiceImpl implements ResultService {
 
     private final CandidateService candidateService;
 
-    private final VoteRepository voteRepository;
+    private final VoterService voterService;
 
     @Autowired
-    public ResultServiceImpl(CandidateService candidateService, VoteRepository voteRepository) {
+    public ResultServiceImpl(CandidateService candidateService, VoterService voterService) {
         this.candidateService = candidateService;
-        this.voteRepository = voteRepository;
+        this.voterService = voterService;
     }
 
-    public List<GeneralDistributionDTO> calculateGeneralVotingDistribution() {
-        // GeneralDistributionDto does not contain a list with voter names, because data about voting is anonymous???
-        List<GeneralDistributionDTO> generalDistribution = new ArrayList<>();
-
+    @Override
+    public List<CandidatePercentageDTO> calculateGeneralVotingDistribution() {
         List<Candidate> candidates = candidateService.getAll();
-        List<Voter> voters = voteRepository.findAll();
+        List<Voter> voters = voterService.getAll();
+
+        // GeneralDistributionDto does not contain a list with voters, because data about voting is anonymous???
+        return calculatePercentageForCandidates(candidates, voters);
+    }
+
+    @Override
+    public List<CandidateDTO> getWinner() {
+        List<CandidateDTO> winners = new ArrayList<>();
+        List<Candidate> candidates = candidateService.getAll();
+        List<Voter> voters = voterService.getAll();
+
+        List<CandidatePercentageDTO> candidatePercentageDTOS = calculatePercentageForCandidates(candidates, voters);
+
+        // Sort the candidate percentage DTOs by percentage of votes in descending order
+        candidatePercentageDTOS.sort(Comparator.comparing(CandidatePercentageDTO::getPercentageOfVotes).reversed());
+
+        CandidatePercentageDTO topCandidate = candidatePercentageDTOS.get(0);
+        // Check if top candidate has more than 50 percentage of voters
+        if(topCandidate.getPercentageOfVotes().compareTo(BigDecimal.valueOf(50)) > 0) {
+            winners.add(candidatePercentageDTOS.get(0).getCandidateDTO());
+            log.debug("Single winner has been found.");
+            return winners;
+        }
+        // TODO: fix in case 3 are equal or 3 have no votes
+        // Add two with the most percentage
+        winners.add(topCandidate.getCandidateDTO());
+        winners.add(candidatePercentageDTOS.get(1).getCandidateDTO());
+        return winners;
+    }
+
+    @Override
+    public List<RegionDistributionDTO> calculateRegionVotingDistribution() {
+        List<RegionDistributionDTO> regionDistribution = new ArrayList<>();
+        List<Candidate> candidates = candidateService.getAll();
+
+        // Looping through regions
+        for (Region region : Region.values()) {
+            RegionDistributionDTO regionDistributionDTO = new RegionDistributionDTO();
+            regionDistributionDTO.setRegion(region);
+
+            // Get voters from current region
+            List<Voter> votersByRegion = voterService.getAllByRegion(region);
+            List<CandidatePercentageDTO> candidatePercentageDTOS = calculatePercentageForCandidates(candidates, votersByRegion);
+
+            regionDistributionDTO.setCandidatePercentageDTO(candidatePercentageDTOS);
+            regionDistribution.add(regionDistributionDTO);
+        }
+
+        return regionDistribution;
+    }
+
+    public List<CandidatePercentageDTO>  calculatePercentageForCandidates(List<Candidate> candidates, List<Voter> voters) {
+        List<CandidatePercentageDTO> generalDistribution = new ArrayList<>();
 
         for (Candidate candidate : candidates){
             int numberOfVotes = 0;
-            GeneralDistributionDTO generalDistributionDTO = new GeneralDistributionDTO();
-            generalDistributionDTO.setCandidateDTO(
+            CandidatePercentageDTO candidatePercentageDTO = new CandidatePercentageDTO();
+            candidatePercentageDTO.setCandidateDTO(
                     new CandidateDTO(
                             candidate.getFirstname(),
                             candidate.getLastname(),
@@ -51,38 +104,17 @@ public class ResultServiceImpl implements ResultService {
             );
 
             for(Voter voter : voters) {
-                // increment number of votes if vote number matches
+                // Increment number of votes if vote number matches
                 if(candidate.getVoteNumber() == voter.getCandidate().getVoteNumber()) {
                     numberOfVotes++;
                 }
             }
 
-            generalDistributionDTO.setPercentageOfVotes(PercentageHelper.getPercentage(numberOfVotes, voters.size()));
-            generalDistribution.add(generalDistributionDTO);
+            // Use PercentageHelper to get percentage
+            candidatePercentageDTO.setPercentageOfVotes(PercentageHelper.getPercentage(numberOfVotes, voters.size()));
+            generalDistribution.add(candidatePercentageDTO);
         }
 
         return generalDistribution;
-    }
-
-    @Override
-    public List<CandidateDTO> getWinner() {
-        List<CandidateDTO> winners = new ArrayList<>();
-
-        List<GeneralDistributionDTO> generalDistributionDTOS = calculateGeneralVotingDistribution();
-
-        // Sort the general distribution DTOs by percentage of votes in descending order
-        generalDistributionDTOS.sort(Comparator.comparing(GeneralDistributionDTO::getPercentageOfVotes).reversed());
-
-        GeneralDistributionDTO topCandidate = generalDistributionDTOS.get(0);
-        // Check if top candidate has more than 50 percentage of voters
-        if(topCandidate.getPercentageOfVotes().compareTo(BigDecimal.valueOf(50)) > 0) {
-            winners.add(generalDistributionDTOS.get(0).getCandidateDTO());
-            return winners;
-        }
-        // TODO: fix in case 3 are equal or 3 have no votes
-        // Add two with the most percentage
-        winners.add(topCandidate.getCandidateDTO());
-        winners.add(generalDistributionDTOS.get(1).getCandidateDTO());
-        return winners;
     }
 }
