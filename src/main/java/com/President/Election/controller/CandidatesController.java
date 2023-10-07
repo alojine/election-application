@@ -1,6 +1,7 @@
 package com.President.Election.controller;
 
-import com.President.Election.model.Candidate;
+import com.President.Election.DTO.CandidateDTO;
+import com.President.Election.mapper.CandidateMapper;
 import com.President.Election.repository.CandidateRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +17,15 @@ public class CandidatesController {
 
     private final CandidateRepository candidateRepository;
 
-    public CandidatesController(CandidateRepository candidateRepository) {
+    private final CandidateMapper candidateMapper;
+
+    public CandidatesController(CandidateRepository candidateRepository, CandidateMapper candidateMapper) {
         this.candidateRepository = candidateRepository;
+        this.candidateMapper = candidateMapper;
     }
 
     @GetMapping
-    public ResponseEntity<List<Candidate>> getAll() {
-        return new ResponseEntity<>(candidateRepository.findAll(), HttpStatus.OK);
+    public ResponseEntity<List<CandidateDTO>> getAll() {
+        return new ResponseEntity<>(candidateMapper.candidatesToCandidateDTOs(candidateRepository.findAll()), HttpStatus.OK);
     }
 }

@@ -1,7 +1,9 @@
 package com.President.Election.controller;
 
 import com.President.Election.DTO.VoteDTO;
+import com.President.Election.DTO.VoterDTO;
 import com.President.Election.enums.Region;
+import com.President.Election.mapper.VoterMapper;
 import com.President.Election.model.Voter;
 import com.President.Election.service.CandidateService;
 import com.President.Election.service.VoterService;
@@ -19,15 +21,17 @@ public class VotesController {
 
     private final CandidateService candidateService;
     private final VoterService voterService;
+    private final VoterMapper voterMapper;
 
     @Autowired
-    public VotesController(CandidateService candidateService, VoterService voterService) {
+    public VotesController(CandidateService candidateService, VoterService voterService, VoterMapper voterMapper) {
         this.candidateService = candidateService;
         this.voterService = voterService;
+        this.voterMapper = voterMapper;
     }
 
     @PostMapping
-    public ResponseEntity<Voter> vote (
+    public ResponseEntity<VoterDTO> vote (
             @RequestBody @Validated VoteDTO voteDto
     ) throws Exception {
         Voter voter = new Voter();
@@ -35,6 +39,6 @@ public class VotesController {
         voter.setName(voteDto.name());
         voter.setRegion(Region.isValidRegion(voteDto.region()));
         voter.setCandidate(candidateService.getByVoteNumber(voteDto.candidateNumber()));
-        return new ResponseEntity<>(voterService.registerVote(voter), HttpStatus.OK);
+        return new ResponseEntity<>(voterMapper.voterToVoterDTO(voterService.registerVote(voter)), HttpStatus.OK);
     }
 }
