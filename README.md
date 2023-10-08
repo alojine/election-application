@@ -34,7 +34,7 @@ mvn spring-boot:run
 * Allows Voter to make a post request in order to vote for a candidate.
 * Voter can attempt only one vote.
 * Voter cannot change his vote after the vote has been submitted.
-* There are five regions to choose from **CALIFORNIA, TEXAS, FLORIDA, OHIO, INDIANA**. Region must be written using **CAPITAL** letters only.
+* There are five regions to choose from **VILNIUS, KAUNAS, KLAIPEDA, SIAULIAI, PENEVEZYS**. Region must be written using **CAPITAL** letters only.
 * Use provided request body bellow to make a vote!
 ```
   {

@@ -1,11 +1,11 @@
 package com.President.Election.enums;
 
 public enum Region {
-    CALIFORNIA,
-    TEXAS,
-    FLORIDA,
-    OHIO,
-    INDIANA;
+    VILNIUS,
+    KAUNAS,
+    KLAIPEDA,
+    SIAULIAI,
+    PANEVEZYS;
 
     public static Region isValidRegion(String providedRegion) throws Exception {
         for(Region realRegion : values()) {
