@@ -42,13 +42,13 @@ public class VoterServiceImpl implements VoterService {
     @Override
     public Voter registerVote(Voter voter) throws Exception {
         log.info("Voter validation has started");
-        if (voterRepository.findByNameAndRegion(voter.getName(), voter.getRegion()) != null) {
-            Voter voterFromDb = voterRepository.findByNameAndRegion(voter.getName(), voter.getRegion());
-            if(voterFromDb.getCandidate() == voterFromDb.getCandidate()) {
-                throw new HasVotedException("Voter with id:" + voter.getId() + "has already voted. Voter cannot vote for same candidate twice");
-            } else if (voterFromDb.getCandidate() != voterFromDb.getCandidate()) {
-                throw new HasVotedException("Voter with id:" + voter.getId() + "has already voted. Voter cannot vote for two different candidates");
+        if (voterRepository.findByName(voter.getName()) != null) {
+            log.debug("Voter was not validated");
+            Voter voterFromDb = voterRepository.findByName(voter.getName());
+            if(voterFromDb.getCandidate().equals(voter.getCandidate())) {
+                throw new HasVotedException("Voter with id:" + voter.getId() + "has already voted. Voter cannot vote for same candidate twice.");
             }
+            throw new HasVotedException("Voter with id:" + voter.getId() + "has already voted. Voter cannot vote for two different candidates.");
         }
         log.info("Voter validation has finished");
         return voterRepository.save(voter);

@@ -4,6 +4,7 @@ import com.President.Election.DTO.CandidateDTO;
 import com.President.Election.DTO.VoteDTO;
 import com.President.Election.DTO.VoterDTO;
 import com.President.Election.enums.Region;
+import com.President.Election.exception.NotSelectableException;
 import com.President.Election.mapper.VoterMapper;
 import com.President.Election.model.Candidate;
 import com.President.Election.model.Voter;
@@ -66,6 +67,18 @@ class VotesControllerTest {
     @Test
     public void whenMakeVoteWithInvalidData_thenThrowValidationError() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
+
+        mvc.perform(MockMvcRequestBuilders.post("/api/v1/votes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString("wrong body")))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+    }
+
+    @Test
+    public void whenMakeVote_thenThrowHasVotedException() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        when(voterService.registerVote(provideVoter())).thenThrow(new Exception("Not Selectable"));
 
         mvc.perform(MockMvcRequestBuilders.post("/api/v1/votes")
                         .contentType(MediaType.APPLICATION_JSON)

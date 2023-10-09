@@ -4,6 +4,7 @@ import com.President.Election.DTO.CandidateDTO;
 import com.President.Election.DTO.CandidatePercentageDTO;
 import com.President.Election.DTO.RegionDistributionDTO;
 import com.President.Election.enums.Region;
+import com.President.Election.exception.NotSelectableException;
 import com.President.Election.model.Candidate;
 import com.President.Election.model.Voter;
 import com.President.Election.service.CandidateService;
@@ -15,7 +16,6 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -56,7 +56,7 @@ class ResultServiceImplTest {
     }
 
     @Test
-    public void whenPickWinner_thenPrickSingleWinner() {
+    public void whenPickWinner_thenPrickSingleWinner() throws NotSelectableException {
         List<Voter> oneVoterForBill = provideVoterList();
         List<Candidate> Bill = provideCandidateList();
 
@@ -68,9 +68,9 @@ class ResultServiceImplTest {
     }
 
     @Test
-    public void whenPickWinner_thenPickTwoWinners() {
+    public void whenPickWinner_thenPickTwoWinners() throws NotSelectableException {
         List<Voter> voteForBillAndVoteForJon = provideTwoVoterList();
-        List<Candidate> BillAndJon = provideTwoCandidateList();
+        List<Candidate> BillAndJon = provideThreeCandidateList();
 
         when(candidateService.getAll()).thenReturn(BillAndJon);
         when(voterService.getAll()).thenReturn(voteForBillAndVoteForJon);
@@ -196,6 +196,38 @@ class ResultServiceImplTest {
         return voters;
     }
 
+    private static List<Candidate> provideThreeCandidateList() {
+        List<Candidate> candidates = new ArrayList<>();
+        candidates.add(
+                new Candidate(
+                        UUID.fromString("550e8400-e29b-41d4-a716-446655440000"),
+                        "Bill",
+                        "Gates",
+                        1,
+                        "Programmer, Investor, Founder of Microsoft"
+                )
+        );
+        candidates.add(
+                new Candidate(
+                        UUID.fromString("e58ed763-928c-4155-bee9-fdbaaadc15f3"),
+                        "Jon",
+                        "Jones",
+                        2,
+                        "Mixed martial arts and UFC fighter."
+                )
+        );
+        candidates.add(
+                new Candidate(
+                        UUID.fromString("e58ed763-928c-4155-bee9-fddddadc15f3"),
+                        "Benjamin",
+                        "Franklin",
+                        3,
+                        "Politician, writer, inventor, scientist"
+                )
+        );
+        return candidates;
+    }
+
     private static List<Candidate> provideTwoCandidateList() {
         List<Candidate> candidates = new ArrayList<>();
         candidates.add(
@@ -250,7 +282,6 @@ class ResultServiceImplTest {
 
     private static List<CandidatePercentageDTO> provideCandidatePercentageList() {
         List<CandidatePercentageDTO> candidatePercentageDTOS = new ArrayList<>();
-        BigDecimal percentage = BigDecimal.valueOf(100.01).setScale(1, RoundingMode.FLOOR);
         candidatePercentageDTOS.add(
                 new CandidatePercentageDTO(
                         new CandidateDTO(

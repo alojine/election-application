@@ -4,6 +4,7 @@ import com.President.Election.DTO.CandidateDTO;
 import com.President.Election.DTO.CandidatePercentageDTO;
 import com.President.Election.DTO.RegionDistributionDTO;
 import com.President.Election.enums.Region;
+import com.President.Election.exception.NotSelectableException;
 import com.President.Election.model.Candidate;
 import com.President.Election.model.Voter;
 import com.President.Election.service.CandidateService;
@@ -43,7 +44,7 @@ public class ResultServiceImpl implements ResultService {
     }
 
     @Override
-    public List<CandidateDTO> getWinner() {
+    public List<CandidateDTO> getWinner() throws NotSelectableException {
         List<CandidateDTO> winners = new ArrayList<>();
         List<Candidate> candidates = candidateService.getAll();
         List<Voter> voters = voterService.getAll();
@@ -57,11 +58,22 @@ public class ResultServiceImpl implements ResultService {
         // Check if top candidate has more than 50 percentage of voters
         if(topCandidate.getPercentageOfVotes().compareTo(BigDecimal.valueOf(50)) > 0) {
             winners.add(candidatePercentageDTOS.get(0).getCandidateDTO());
-            log.debug("Single winner has been found.");
+            log.debug("Single winner has been selected.");
             return winners;
         }
-        // TODO: fix in case 3 are equal or 3 have no votes
+        // Check if Three top candidates have the same amount of votes
+        if ( topCandidate.getPercentageOfVotes().equals(candidatePercentageDTOS.get(1).getPercentageOfVotes()) &&
+                candidatePercentageDTOS.get(1).getPercentageOfVotes().equals(candidatePercentageDTOS.get(2).getPercentageOfVotes())
+        ) {
+            throw new NotSelectableException("Winner is not selectable. Top three candidates have the same percentage of votes.");
+            // Second and third place candidates have the same amount of votes
+        } else if (topCandidate.getPercentageOfVotes().compareTo(candidatePercentageDTOS.get(1).getPercentageOfVotes()) > 0 &&
+                candidatePercentageDTOS.get(1).getPercentageOfVotes().equals(candidatePercentageDTOS.get(2).getPercentageOfVotes())) {
+            throw new NotSelectableException("Winner is not selectable. Second and third place candidates have the same amount of votes");
+        }
+
         // Add two with the most percentage
+        log.info("Two winners have been selected");
         winners.add(topCandidate.getCandidateDTO());
         winners.add(candidatePercentageDTOS.get(1).getCandidateDTO());
         return winners;

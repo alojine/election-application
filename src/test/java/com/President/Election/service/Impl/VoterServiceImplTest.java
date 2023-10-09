@@ -55,7 +55,7 @@ class VoterServiceImplTest {
 
     @Test
     public void whenRegisterVote_thenReturnNoVoter() throws Exception {
-        when(voterRepository.findByNameAndRegion(any(), any())).thenReturn(null);
+        when(voterRepository.findByName(any())).thenReturn(null);
         when(voterRepository.save(any())).thenReturn(provideVoter());
 
         assertThat(voterService.registerVote(provideVoter())).isEqualTo(provideVoter());
@@ -63,7 +63,7 @@ class VoterServiceImplTest {
 
     @Test
     public void whenRegisterVote_votingForDifferentCandidate_thenThrowHasVotedException() {
-        when(voterRepository.findByNameAndRegion(any(), any())).thenReturn(provideVoter());
+        when(voterRepository.findByName(any())).thenReturn(provideVoter());
         when(voterRepository.save(any())).thenReturn(provideDifferentCandidateVoter());
 
         assertThrows(HasVotedException.class, () -> voterService.registerVote(provideVoter()));
@@ -71,7 +71,7 @@ class VoterServiceImplTest {
 
     @Test
     public void whenRegisterVote_votingTwice_thenThrowHasVotedException() {
-        when(voterRepository.findByNameAndRegion(any(), any())).thenReturn(provideVoter());
+        when(voterRepository.findByName(any())).thenReturn(provideVoter());
         when(voterRepository.save(any())).thenReturn(provideVoter());
 
         assertThrows(HasVotedException.class, () -> voterService.registerVote(provideVoter()));

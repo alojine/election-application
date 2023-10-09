@@ -1,6 +1,5 @@
 package com.President.Election.repository.Impl;
 
-import com.President.Election.enums.Region;
 import com.President.Election.model.Voter;
 import com.President.Election.repository.VoterRepository;
 import org.springframework.stereotype.Component;
@@ -18,9 +17,9 @@ public class VoterRepositoryImpl implements VoterRepository {
     }
 
     @Override
-    public Voter findByNameAndRegion(String name, Region region){
+    public Voter findByName(String name){
         for (Voter voter : voterList) {
-            if (voter.getName().equals(name) && voter.getRegion().equals(region)) {
+            if (voter.getName().equals(name)) {
                 return voter;
             }
         }

@@ -3,6 +3,7 @@ package com.President.Election.controller;
 import com.President.Election.DTO.CandidateDTO;
 import com.President.Election.DTO.CandidatePercentageDTO;
 import com.President.Election.DTO.RegionDistributionDTO;
+import com.President.Election.exception.NotSelectableException;
 import com.President.Election.service.ResultService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,7 @@ public class ResultsController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CandidateDTO>> getWinner() {
+    public ResponseEntity<List<CandidateDTO>> getWinner() throws NotSelectableException {
         return new ResponseEntity<>(resultService.getWinner(), HttpStatus.OK);
     }
 
